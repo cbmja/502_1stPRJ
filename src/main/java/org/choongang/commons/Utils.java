@@ -4,11 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.choongang.admin.config.controllers.BasicConfig;
+import org.choongang.file.service.FileInfoService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 @Component
@@ -17,6 +19,7 @@ public class Utils {
 
     private final HttpServletRequest request;
     private final HttpSession session;
+    private final FileInfoService fileInfoService;
 
     private static final ResourceBundle commonsBundle;
     private static final ResourceBundle validationsBundle;
@@ -74,6 +77,8 @@ public class Utils {
      * @return
      */
     public String nl2br(String str) {
+        str = Objects.requireNonNullElse(str, "");
+
         str = str.replaceAll("\\n", "<br>")
                 .replaceAll("\\r", "");
 
@@ -105,5 +110,20 @@ public class Utils {
                 .mapToInt(Integer::parseInt).toArray();
 
         return data;
+    }
+
+    public String printThumb(long seq, int width, int height, String className) {
+        String[] data = fileInfoService.getThumb(seq, width, height);
+        if (data != null) {
+            String cls = StringUtils.hasText(className) ? " class='" + className + "'" : "";
+            String image = String.format("<img src='%s'%s>", data[1], cls);
+            return image;
+        }
+
+        return "";
+    }
+
+    public String printThumb(long seq, int width, int height) {
+        return printThumb(seq, width, height, null);
     }
 }

@@ -25,15 +25,25 @@ public class FileUploadService {
     private final FileProperties fileProperties;
     private final FileInfoRepository repository;
     private final FileInfoService infoService;
+    private final FileDeleteService deleteService;
     private final Utils utils;
 
-    public List<FileInfo> upload(MultipartFile[] files, String gid, String location) {
+    public List<FileInfo> upload(MultipartFile[] files, String gid, String location, boolean imageOnly, boolean singleFile) {
         /**
          * 1. 파일 정보 저장
          * 2. 서버쪽에 파일 업로드 처리
          */
 
         gid = StringUtils.hasText(gid) ? gid : UUID.randomUUID().toString();
+
+        /*
+         * 단일 파일 업로드
+         * gid + location : 기 업로드된 파일 삭제 -> 새로 업로드
+         */
+        if (singleFile) {
+            deleteService.delete(gid, location);
+        }
+
 
         String uploadPath = fileProperties.getPath(); // 파일 업로드 기본 경로
         String thumbPath = uploadPath + "thumbs/"; // 썸네일 업로드 기본 경로
@@ -51,7 +61,11 @@ public class FileUploadService {
             String extension = fileName.substring(fileName.lastIndexOf("."));
 
             String fileType = file.getContentType(); // 파일 종류 - 예) image/..
-
+            // 이미지만 업로드 하는 경우, 이미지가 아닌 형식은 업로드 배제
+            if (imageOnly && fileType.indexOf("image/") == -1) {
+                continue;
+            }
+            
             FileInfo fileInfo = FileInfo.builder()
                     .gid(gid)
                     .location(location)
