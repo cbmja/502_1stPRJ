@@ -72,4 +72,10 @@ public class MemberController implements ExceptionProcessor {
         model.addAttribute("addCommonScript", addCommonScript);
         model.addAttribute("addScript", addScript);
     }
+
+    @GetMapping("/sale")
+    public String board(){
+
+        return "saleboard/saleBoard/saleBoard";
+    }
 }
