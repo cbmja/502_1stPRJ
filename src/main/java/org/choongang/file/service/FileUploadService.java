@@ -26,7 +26,7 @@ public class FileUploadService {
     private final FileInfoRepository repository;
     private final FileInfoService infoService;
     private final FileDeleteService deleteService;
-    private final Utils utils;
+    private final Utils utils ;
 
     public List<FileInfo> upload(MultipartFile[] files, String gid, String location, boolean imageOnly, boolean singleFile) {
         /**
