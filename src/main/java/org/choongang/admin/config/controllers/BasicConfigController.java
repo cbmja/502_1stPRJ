@@ -3,6 +3,8 @@ package org.choongang.admin.config.controllers;
 import lombok.RequiredArgsConstructor;
 import org.choongang.admin.config.service.ConfigInfoService;
 import org.choongang.admin.config.service.ConfigSaveService;
+import org.choongang.admin.menus.Menu;
+import org.choongang.admin.menus.MenuDetail;
 import org.choongang.commons.ExceptionProcessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/config")
@@ -22,6 +26,16 @@ public class BasicConfigController implements ExceptionProcessor {
     @ModelAttribute("menuCode")
     public String getMenuCode() {
         return "config";
+    }
+
+    @ModelAttribute("subMenus")
+    public List<MenuDetail> getSubMenus() {
+        return Menu.getMenus("config");
+    }
+
+    @ModelAttribute("subMenuCode")
+    public String getSubMenuCode() {
+        return "basic";
     }
 
     @ModelAttribute("pageTitle")

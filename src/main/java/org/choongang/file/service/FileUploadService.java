@@ -26,7 +26,7 @@ public class FileUploadService {
     private final FileInfoRepository repository;
     private final FileInfoService infoService;
     private final FileDeleteService deleteService;
-    private final Utils utils ;
+    private final Utils utils;
 
     public List<FileInfo> upload(MultipartFile[] files, String gid, String location, boolean imageOnly, boolean singleFile) {
         /**
@@ -65,7 +65,7 @@ public class FileUploadService {
             if (imageOnly && fileType.indexOf("image/") == -1) {
                 continue;
             }
-            
+
             FileInfo fileInfo = FileInfo.builder()
                     .gid(gid)
                     .location(location)
@@ -112,14 +112,14 @@ public class FileUploadService {
                 uploadedFiles.add(fileInfo); // 업로드 성공시 파일 정보 추가
 
             } catch (IOException e) {
-               e.printStackTrace();
-               repository.delete(fileInfo); // 업로드 실패시에는 파일 정보 제거
-               repository.flush();
+                e.printStackTrace();
+                repository.delete(fileInfo); // 업로드 실패시에는 파일 정보 제거
+                repository.flush();
             }
             /* 파일 업로드 처리 E */
         }
 
-       return uploadedFiles;
+        return uploadedFiles;
     }
 
     /**

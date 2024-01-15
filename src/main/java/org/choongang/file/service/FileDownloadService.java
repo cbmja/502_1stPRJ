@@ -25,7 +25,7 @@ public class FileDownloadService {
 
         File file = new File(filePath);
         try (FileInputStream fis = new FileInputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(fis)) {
+             BufferedInputStream bis = new BufferedInputStream(fis)) {
             OutputStream out = response.getOutputStream(); // 응답 Body에 출력
 
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName);

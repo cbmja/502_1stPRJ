@@ -4,6 +4,18 @@
     <div class="error global" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
 
     <input type="hidden" name="gid" th:field="*{gid}">
+    
+    <h2>학교 설정</h2>
+    <table class="table_cols mb30">
+            <th>학교 선택</th>
+            <td>
+                <select name="schoolDomain" th:field="*{schoolDomain}">
+                    <option value="선택하세요" ></option>
+                    <option th:each="school : ${@schoolUtil.getSchools()}" th:value="${school[1]}" th:text="${school[0]}"></option>
+                </select>
+            </td>
+        </tr>
+    </table>
 
     <h2>기본 설정</h2>
     <table class="table_cols mb30">
@@ -219,6 +231,33 @@
             </td>
         </tr>
     </table>
+    <h2>게시판 로고</h2>
+    <table class="table_cols mb30">
+        <tr>
+            <th>로고1</th>
+            <td>
+                <div th:if="*{logo1 == null}" class="dragndrop_box dragndrop_uploads logo1_box" data-location="logo1" data-image-only="true" data-single-file="true"></div>
+
+                <div th:if="*{logo1 != null}" class="dragndrop_box dragndrop_uploads logo1_box uploaded" data-location="logo1" data-image-only="true" data-single-file="true" th:id="*{'file_' + logo1.seq}" th:style="*{@utils.backgroundStyle(logo1)}" th:data-file-id="*{logo1.seq}"></div>
+            </td>
+        </tr>
+        <tr>
+            <th>로고2</th>
+            <td>
+                <div th:if="*{logo2 == null}" class="dragndrop_box dragndrop_uploads logo2_box" data-location="logo2" data-image-only="true" data-single-file="true"></div>
+
+                <div th:if="*{logo2 != null}" class="dragndrop_box dragndrop_uploads logo2_box uploaded" data-location="logo2" data-image-only="true" data-single-file="true" th:id="*{'file_' + logo2.seq}" th:style="*{@utils.backgroundStyle(logo2)}" th:data-file-id="*{logo2.seq}"></div>
+            </td>
+        </tr>
+        <tr>
+            <th>로고3</th>
+            <td>
+                <div th:if="*{logo3 == null}" class="dragndrop_box dragndrop_uploads logo3_box" data-location="logo3" data-image-only="true" data-single-file="true"></div>
+
+                <div th:if="*{logo3 != null}" class="dragndrop_box dragndrop_uploads logo3_box uploaded" data-location="logo3" data-image-only="true" data-single-file="true" th:id="*{'file_' + logo3.seq}" th:style="*{@utils.backgroundStyle(logo3)}" th:data-file-id="*{logo3.seq}"></div>
+            </td>
+        </tr>
+    </table>
 
     <h2>게시판 상단</h2>
     <table class="table_cols mb30">
@@ -228,12 +267,16 @@
                 <textarea id="html_top" name="htmlTop" th:field="*{htmlTop}"></textarea>
 
                 <button type="button" class="upload_files sbtn"
-                    data-location="html_top" data-image-only="true"
+                        data-location="html_top" data-image-only="true"
                 >
                     <i class="xi-image"></i>
                     이미지 추가
                 </button>
-                <div class="uploaded_files" id="uploaded_files_html_top"></div>
+                <div class="uploaded_files" id="uploaded_files_html_top">
+                    <th:block th:each="item : *{htmlTopImages}">
+                        <span th:replace="~{common/_editor_file::item}"></span>
+                    </th:block>
+                </div>
             </td>
         </tr>
     </table>
@@ -251,7 +294,11 @@
                     <i class="xi-image"></i>
                     이미지 추가
                 </button>
-                <div class="uploaded_files" id="uploaded_files_html_bottom"></div>
+                <div class="uploaded_files" id="uploaded_files_html_bottom">
+                    <th:block th:each="item : *{htmlBottomImages}">
+                        <span th:replace="~{common/_editor_file::item}"></span>
+                    </th:block>
+                </div>
             </td>
         </tr>
     </table>
