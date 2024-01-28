@@ -114,12 +114,14 @@ public class Utils {
     }
 
     public String printThumb(long seq, int width, int height, String className) {
-        String[] data = fileInfoService.getThumb(seq, width, height);
-        if (data != null) {
-            String cls = StringUtils.hasText(className) ? " class='" + className + "'" : "";
-            String image = String.format("<img src='%s'%s>", data[1], cls);
-            return image;
-        }
+        try {
+            String[] data = fileInfoService.getThumb(seq, width, height);
+            if (data != null) {
+                String cls = StringUtils.hasText(className) ? " class='" + className + "'" : "";
+                String image = String.format("<img src='%s'%s>", data[1], cls);
+                return image;
+            }
+        } catch (Exception e) {}
 
         return "";
     }
@@ -166,14 +168,73 @@ public class Utils {
 
     public String backgroundStyle(FileInfo file) {
 
-        String imageUrl = file.getFileUrl();
-        List<String> thumbsUrl = file.getThumbsUrl();
-        if (thumbsUrl != null && !thumbsUrl.isEmpty()) {
-            imageUrl = thumbsUrl.get(thumbsUrl.size() - 1);
+       return backgroundStyle(file, 100, 100);
+    }
+
+
+    public String backgroundStyle(FileInfo file, int width, int height) {
+        try {
+            String[] data = fileInfoService.getThumb(file.getSeq(), width, height);
+            String imageUrl = data[1];
+
+            String style = String.format("background:url('%s') no-repeat center center; background-size:cover;", imageUrl);
+
+            return style;
+        } catch (Exception e){
+            e.printStackTrace();
+            return "";
         }
+    }
 
-        String style = String.format("background:url('%s') no-repeat center center; background-size:cover;", imageUrl);
+    public String backgroundStyle_myPage(FileInfo file, int width, int height) {
+       return backgroundStyle(file, width, height);
+    }
 
-        return style;
+    public String backgroundStyle_myPage(FileInfo file) {
+        return backgroundStyle(file);
+    }
+
+    /**
+     * 요청 데이터 단일 조회 편의 함수
+     *
+     * @param name
+     * @return
+     */
+    public String getParam(String name) {
+        return request.getParameter(name);
+    }
+
+    /**
+     * 요청 데이터 복수 갯수 조회 편의 함수
+     *
+     * @param name
+     * @return
+     */
+    public String[] getParams(String name) {
+        return request.getParameterValues(name);
+    }
+
+    /**
+     * 비회원 UID
+     *      IP + 브라우저 정보
+     *
+     * @return
+     */
+    public int guestUid() {
+        String ip = request.getRemoteAddr();
+        String ua = request.getHeader("User-Agent");
+
+        return Objects.hash(ip, ua);
+    }
+
+    /**
+     *  삭제 버튼 클릭시 "정말 삭제하시겠습니까?" confirm 대화상자 출력
+     *
+     * @return
+     */
+    public String confirmDelete() {
+        String message = Utils.getMessage("Confirm.delete.message", "commons");
+
+        return String.format("return confirm('%s');", message);
     }
 }

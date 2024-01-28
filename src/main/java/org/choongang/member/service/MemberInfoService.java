@@ -3,10 +3,12 @@ package org.choongang.member.service;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.choongang.commons.ListData;
 import org.choongang.commons.Pagination;
@@ -18,20 +20,25 @@ import org.choongang.member.entities.Authorities;
 import org.choongang.member.entities.Member;
 import org.choongang.member.entities.QMember;
 import org.choongang.member.repositories.MemberRepository;
+import org.choongang.school.entities.School;
+import org.choongang.school.service.SchoolInfoService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberInfoService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final FileInfoService fileInfoService;
+    private final SchoolInfoService schoolInfoService;
     private final HttpServletRequest request;
     private final EntityManager em;
 
@@ -50,12 +57,8 @@ public class MemberInfoService implements UserDetailsService {
                     .toList();
         }
 
-        /* 프로필 이미지 처리 S */
-        List<FileInfo> files = fileInfoService.getListDone(member.getGid());
-        if (files != null && !files.isEmpty()) {
-            member.setProfileImage(files.get(0));
-        }
-        /* 프로필 이미지 처리 E */
+        // 추가 정보 처리
+        addMemberInfo(member);
 
         return MemberInfo.builder()
                 .email(member.getEmail())
@@ -63,6 +66,7 @@ public class MemberInfoService implements UserDetailsService {
                 .password(member.getPassword())
                 .member(member)
                 .authorities(authorities)
+                .enable(member.isEnable())
                 .build();
     }
 
@@ -80,6 +84,38 @@ public class MemberInfoService implements UserDetailsService {
 
         BooleanBuilder andBuilder = new BooleanBuilder();
         QMember member = QMember.member;
+
+        /* 검색 조건 처리 S */
+
+        String sopt = search.getSopt();
+        sopt = StringUtils.hasText(sopt) ? sopt.trim() : "ALL";
+        String skey = search.getSkey(); // 키워드
+
+        // 조건별 키워드 검색
+        if (StringUtils.hasText(skey)) {
+            skey = skey.trim();
+
+            BooleanExpression UserIdcond = member.userId.contains(skey);
+            BooleanExpression Namecond = member.name.contains(skey);
+            BooleanExpression SchoolNamecond = member.school.schoolName.contains(skey);
+            //BooleanExpression authority = member.authority.contains(skey);
+
+            if (sopt.equals("userId")) {
+                andBuilder.and(UserIdcond);
+            } else if (sopt.equals("name")) {
+                andBuilder.and(Namecond);
+            } else if (sopt.equals("schoolName")) {
+                andBuilder.and(SchoolNamecond);
+            } else { // 통합검색 : userId + name
+                BooleanBuilder orBuilder = new BooleanBuilder();
+                orBuilder.or(UserIdcond)
+                        .or(Namecond)
+                        .or(SchoolNamecond);
+                andBuilder.and(orBuilder);
+            }
+        }
+
+        /* 검색 조건 처리 E */
 
         PathBuilder<Member> pathBuilder = new PathBuilder<>(Member.class, "member");
 
@@ -100,5 +136,24 @@ public class MemberInfoService implements UserDetailsService {
         /* 페이징 처리 E */
 
         return new ListData<>(items, pagination);
+    }
+
+    /**
+     * 회원 추가 정보 처리
+     *
+     * @param member
+     */
+    public void addMemberInfo(Member member) {
+        /* 프로필 이미지 처리 S */
+        List<FileInfo> files = fileInfoService.getListDone(member.getGid());
+        if (files != null && !files.isEmpty()) {
+            member.setProfileImage(files.get(0));
+        } else {
+            School school = member.getSchool();
+            schoolInfoService.addSchoolInfo(school);
+
+            member.setProfileImage(school.getLogoImage());
+        }
+        /* 프로필 이미지 처리 E */
     }
 }

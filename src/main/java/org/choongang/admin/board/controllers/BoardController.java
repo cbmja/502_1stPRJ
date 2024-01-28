@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.choongang.admin.menus.Menu;
 import org.choongang.admin.menus.MenuDetail;
 import org.choongang.board.entities.Board;
+import org.choongang.board.service.config.BoardConfigDeleteService;
 import org.choongang.board.service.config.BoardConfigInfoService;
 import org.choongang.board.service.config.BoardConfigSaveService;
 import org.choongang.commons.ExceptionProcessor;
@@ -19,10 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 2024.1.11
- * 최종 수정 : changhui98
- */
 @Controller("adminBoardController")
 @RequestMapping("/admin/board")
 @RequiredArgsConstructor
@@ -30,6 +27,8 @@ public class BoardController implements ExceptionProcessor {
 
     private final BoardConfigSaveService configSaveService;
     private final BoardConfigInfoService configInfoService;
+    private final BoardConfigDeleteService configDeleteService;
+
     private final BoardConfigValidator configValidator;
 
     @ModelAttribute("menuCode")
@@ -51,14 +50,41 @@ public class BoardController implements ExceptionProcessor {
     public String list(@ModelAttribute BoardSearch search, Model model) {
         commonProcess("list", model);
 
-        ListData<Board> data = configInfoService.getList(search);
+        ListData<Board> data = configInfoService.getList(search, true);
 
         List<Board> items = data.getItems();
         Pagination pagination = data.getPagination();
 
         model.addAttribute("items", items);
         model.addAttribute("pagination", pagination);
+
         return "admin/board/list";
+    }
+
+    /**
+     * 게시판 목록 - 수정
+     *
+     * @param chks
+     * @return
+     */
+    @PatchMapping
+    public String editList(@RequestParam("chk") List<Integer> chks, Model model) {
+        commonProcess("list", model);
+
+        configSaveService.saveList(chks);
+
+        model.addAttribute("script", "parent.location.reload()");
+        return "common/_execute_script";
+    }
+
+    @DeleteMapping
+    public String deleteList(@RequestParam("chk") List<Integer> chks, Model model) {
+        commonProcess("list", model);
+
+        configDeleteService.deleteList(chks);
+
+        model.addAttribute("script", "parent.location.reload();");
+        return "common/_execute_script";
     }
 
     /**
@@ -73,7 +99,8 @@ public class BoardController implements ExceptionProcessor {
         return "admin/board/add";
     }
 
-    public String edit(@PathVariable("bid") String bid, Model model){
+    @GetMapping("/edit/{bid}")
+    public String edit(@PathVariable("bid") String bid, Model model) {
         commonProcess("edit", model);
 
         RequestBoardConfig form = configInfoService.getForm(bid);
@@ -97,10 +124,12 @@ public class BoardController implements ExceptionProcessor {
         configValidator.validate(config, errors);
 
         if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach(System.out::println);
             return "admin/board/" + mode;
         }
 
         configSaveService.save(config);
+
 
         return "redirect:/admin/board";
     }
