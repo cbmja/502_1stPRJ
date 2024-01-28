@@ -37,5 +37,4 @@ out/
 .vscode/
 
 application-dev.*
-
-src/main/generated/
+src/main/generated
