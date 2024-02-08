@@ -22,19 +22,7 @@
 
 ## 2. 개발 환경
 
-![개발환경]![스크린샷 2024-02-08 105553](https://github.com/cbmja/502_1stPRJ/assets/143980455/1441b5d2-7f3e-4a9c-a9a2-744be60a7688)
-
-
-<div align=center>     
-  <img src="https://img.shields.io/badge/java16-007396?style=flat&logo=java&logoColor=white"> 
-  <img src="https://img.shields.io/badge/jsp4.0-007396?style=flat&logo=jsp&logoColor=white"> 
-  <img src="https://img.shields.io/badge/html5-E34F26?style=flat&logo=html5&logoColor=white"> 
-  <img src="https://img.shields.io/badge/css-1572B6?style=flat&logo=css3&logoColor=white"> 
-  <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat&logo=javascript&logoColor=black"> 
-  <img src="https://img.shields.io/badge/Ajax-0769AD?style=flat&logo=Ajax&logoColor=white">
-  <img src="https://img.shields.io/badge/mysql8.0-4479A1?style=flat&logo=mysql&logoColor=white"> 
-  <img src="https://img.shields.io/badge/apache tomcat9.0-F8DC75?style=flat&logo=apachetomcat&logoColor=black">
-</div>
+![스크린샷 2024-02-08 105553](https://github.com/cbmja/502_1stPRJ/assets/143980455/1441b5d2-7f3e-4a9c-a9a2-744be60a7688)
 
 - Intelli J
 - Spring Boot framework 3.1.3 ver.
