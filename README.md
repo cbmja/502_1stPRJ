@@ -1,7 +1,7 @@
 # 📚 전공서적 중고거래 플랫폼 - Second Books
 
-![홈1](https://github.com/ShinJaeMin98/SecondBooks_Project/assets/124487601/6ba9f048-374b-45fd-9ba5-0a6ed7787057)
-![홈2](https://github.com/ShinJaeMin98/SecondBooks_Project/blob/master/src/main/resources/static/common/image/home_2.jpg)
+![스크린샷 2024-02-08 105457](https://github.com/cbmja/502_1stPRJ/assets/143980455/a5ad83b2-9a2b-4c6f-923c-9b715b715535)
+![스크린샷 2024-02-08 105522](https://github.com/cbmja/502_1stPRJ/assets/143980455/c2dc6c9e-fdd5-429b-a24d-529d49264faa)
 
 ## 1. 프로젝트 소개
 
