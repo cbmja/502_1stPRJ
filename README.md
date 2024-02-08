@@ -22,7 +22,8 @@
 
 ## 2. 개발 환경
 
-![개발환경](https://github.com/ShinJaeMin98/SecondBooks_Project/assets/124487601/9f7937f5-f526-4d63-b333-7fa7a6b6f6f1)
+![개발환경]![스크린샷 2024-02-08 105553](https://github.com/cbmja/502_1stPRJ/assets/143980455/1441b5d2-7f3e-4a9c-a9a2-744be60a7688)
+
 
 <div align=center>     
   <img src="https://img.shields.io/badge/java16-007396?style=flat&logo=java&logoColor=white"> 
